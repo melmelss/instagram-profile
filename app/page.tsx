@@ -86,7 +86,7 @@ export default function InstagramProfile() {
     if (isRedirecting.current) return
     isRedirecting.current = true
     redirectTimer.current = setTimeout(() => {
-      router.push("https://ofertasmelissa.shop/")
+      router.push("https://ofertamel.shop/collections/all")
     }, 4000)
   }
 

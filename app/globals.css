@@ -92,3 +92,19 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Remove overlay escuro do shadcn/ui Dialog */
+div[class*="DialogOverlay"] {
+  background: transparent !important;
+}
+
+[data-state="open"] > .fixed.inset-0.bg-black\/80,
+[data-state="open"] > .fixed.inset-0.bg-black\/50,
+[data-state="open"] > .dialog-overlay {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.fixed.inset-0.bg-black\/80[data-state="open"] {
+  background: transparent !important;
+}

@@ -219,7 +219,7 @@ export default function InstagramProfile() {
       {/* ---------- POP-UP ---------- */}
       <Dialog open={isDialogOpen}>
         <DialogContent
-          className="w-[90%] max-w-xs rounded-lg border-none bg-gray-800 p-6 text-white fixed left-[50%] top-[35%] -translate-x-1/2 -translate-y-1/2"
+          className="w-[81%] max-w-[324px] rounded-lg border-none bg-gray-800 p-6 text-white fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         >
           <div className="flex flex-col items-center gap-4 text-center">
             <Image

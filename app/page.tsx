@@ -30,7 +30,7 @@ function RedirectButton({ children, className = "", variant, size, ...props }: R
     if (isRedirecting.current) return
     isRedirecting.current = true
     redirectTimer.current = setTimeout(() => {
-      router.push("https://ofertasmelissa.shop/")
+      router.push("https://ofertamel.shop/collections/all/")
     }, 4000)
   }
 
@@ -53,7 +53,7 @@ export default function InstagramProfile() {
 
   // Redireciona imediatamente ao clicar no botão
   const handleGoToSite = () => {
-    router.push("https://ofertasmelissa.shop/")
+    router.push("https://ofertamel.shop/collections/all")
   }
 
   const storyHighlights = [

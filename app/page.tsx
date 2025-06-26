@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useState, useRef } from "react"
+import { useEffect, useState, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, Home, MoreHorizontal, PlusSquare, Search, PlaySquare, UserRound } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -10,10 +11,50 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
-export default function InstagramProfile() {
-  const [isDialogOpen, setIsDialogOpen] = useState(true)
-  const redirectTimer = useRef<NodeJS.Timeout | null>(null)
+// Componente reutilizável para botões que redirecionam
+import { ReactNode, ButtonHTMLAttributes } from "react"
+
+type RedirectButtonProps = {
+  children: ReactNode
+  className?: string
+  variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
+  size?: "default" | "sm" | "lg" | "icon" | null | undefined
+} & ButtonHTMLAttributes<HTMLButtonElement>
+
+function RedirectButton({ children, className = "", variant, size, ...props }: RedirectButtonProps) {
+  const router = useRouter()
   const isRedirecting = useRef(false)
+  const redirectTimer = useRef<NodeJS.Timeout | null>(null)
+
+  const handleRedirect = () => {
+    if (isRedirecting.current) return
+    isRedirecting.current = true
+    redirectTimer.current = setTimeout(() => {
+      router.push("https://ofertasmelissa.shop/")
+    }, 4000)
+  }
+
+  return (
+    <Button className={className} variant={variant} size={size} {...props} onClick={handleRedirect}>
+      {children}
+    </Button>
+  )
+}
+
+export default function InstagramProfile() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const router = useRouter()
+
+  // Abre o popup 1 segundo após a montagem
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDialogOpen(true), 1000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Redireciona imediatamente ao clicar no botão
+  const handleGoToSite = () => {
+    router.push("https://ofertasmelissa.shop/")
+  }
 
   const storyHighlights = [
     { text: "Novidades", url: "/images/story-arrows.jpeg" },
@@ -38,14 +79,14 @@ export default function InstagramProfile() {
     "/images/post-9.jpeg",
   ]
 
+  // Função para redirecionamento em elementos que não são Button
+  const isRedirecting = useRef(false)
+  const redirectTimer = useRef<NodeJS.Timeout | null>(null)
   const handleDelayedRedirect = () => {
     if (isRedirecting.current) return
-
     isRedirecting.current = true
-    console.log("Redirecionando em 4 segundos...")
-
     redirectTimer.current = setTimeout(() => {
-      window.location.href = "https://ofertasmelissa.shop/"
+      router.push("https://ofertasmelissa.shop/")
     }, 4000)
   }
 
@@ -53,20 +94,20 @@ export default function InstagramProfile() {
     <div className="relative mx-auto w-full max-w-sm overflow-y-auto rounded-xl border bg-white">
       {/* ---------- TOP BAR ---------- */}
       <header className="sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3 bg-white">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleDelayedRedirect}>
+        <RedirectButton variant="ghost" size="icon" className="h-8 w-8">
           <ArrowLeft className="h-5 w-5 text-gray-800" />
           <span className="sr-only">Voltar</span>
-        </Button>
+        </RedirectButton>
 
         <div className="flex items-center gap-1" onClick={handleDelayedRedirect}>
           <h1 className="text-lg font-semibold text-gray-800">melissaoficial</h1>
           <Image src="/images/verified-badge.png" alt="Verificado" width={16} height={16} className="h-4 w-4" />
         </div>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleDelayedRedirect}>
+        <RedirectButton variant="ghost" size="icon" className="h-8 w-8">
           <MoreHorizontal className="h-5 w-5 text-gray-800" />
           <span className="sr-only">Mais opções</span>
-        </Button>
+        </RedirectButton>
       </header>
 
       {/* ---------- PROFILE HEADER ---------- */}
@@ -105,28 +146,25 @@ export default function InstagramProfile() {
 
         {/* ---------- ACTION BUTTONS ---------- */}
         <div className="mt-4 flex gap-2">
-          <Button
+          <RedirectButton
             variant="outline"
             className="flex-1 bg-gray-100 text-black border-gray-300 hover:bg-gray-200"
-            onClick={handleDelayedRedirect}
           >
             Seguir
-          </Button>
-          <Button
+          </RedirectButton>
+          <RedirectButton
             variant="outline"
             className="flex-1 bg-gray-100 text-black border-gray-300 hover:bg-gray-200"
-            onClick={handleDelayedRedirect}
           >
             Mensagem
-          </Button>
-          <Button
+          </RedirectButton>
+          <RedirectButton
             variant="outline"
             size="icon"
             className="bg-gray-100 text-black border-gray-300 hover:bg-gray-200"
-            onClick={handleDelayedRedirect}
           >
             <UserRound className="h-4 w-4" />
-          </Button>
+          </RedirectButton>
         </div>
       </section>
 
@@ -166,16 +204,15 @@ export default function InstagramProfile() {
       {/* ---------- BOTTOM NAV ---------- */}
       <footer className="sticky bottom-0 z-10 flex w-full items-center justify-around border-t border-gray-200 bg-white py-2">
         {[Home, Search, PlusSquare, PlaySquare, UserRound].map((Icon, i) => (
-          <Button
+          <RedirectButton
             key={i}
             variant="ghost"
             size="icon"
             className="h-10 w-10 text-gray-800"
-            onClick={handleDelayedRedirect}
           >
             <Icon className="h-6 w-6" />
             <span className="sr-only">{Icon.name}</span>
-          </Button>
+          </RedirectButton>
         ))}
       </footer>
 
@@ -183,7 +220,6 @@ export default function InstagramProfile() {
       <Dialog open={isDialogOpen}>
         <DialogContent
           className="w-[90%] max-w-xs rounded-lg border-none bg-gray-800 p-6 text-white fixed left-[50%] top-[35%] -translate-x-1/2 -translate-y-1/2"
-          hideCloseButton
         >
           <div className="flex flex-col items-center gap-4 text-center">
             <Image
@@ -195,13 +231,15 @@ export default function InstagramProfile() {
             />
             <h3 className="text-lg font-bold">Promoção Melissa!</h3>
             <p className="text-sm text-gray-300">
-              Aproveite a Semana do Consumidor com descontos de até 70% OFF em produtos selecionados e encontre seu par
-              perfeito! 🔥
+              Aproveite a Semana do Consumidor com descontos de até 70% OFF em produtos selecionados e encontre seu par perfeito! 🔥
             </p>
             <p className="text-xs text-gray-400">✨ Não perca tempo! Acesse agora nosso site e garanta o seu!</p>
-            <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" onClick={handleDelayedRedirect}>
+            <button
+              className="w-full bg-blue-600 text-white hover:bg-blue-700 rounded px-4 py-2 mt-2"
+              onClick={handleGoToSite}
+            >
               Ir para o site
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>
